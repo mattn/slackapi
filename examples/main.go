@@ -16,7 +16,7 @@ func main() {
 
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {
-		token = "xoxb-3373459148-unuNTStmar3GI9UzZqzgJ2n3"
+		log.Fatal("SLACK_TOKEN environment variable should be set")
 	}
 
 	s.SetToken(token)
