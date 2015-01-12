@@ -1,5 +1,3 @@
-package slackbot
-
 // This package is serves the purpose to create bots for slack
 //
 // Here is an example integration:
@@ -28,6 +26,7 @@ package slackbot
 //     	s.SetToken(token)
 //     	log.Fatal(s.Start())
 //     }
+package slackbot
 
 import (
 	"github.com/gorilla/websocket"
