@@ -20,8 +20,5 @@ func main() {
 	}
 
 	s.SetToken(token)
-	err := s.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(s.Start())
 }
