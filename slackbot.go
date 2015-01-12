@@ -1,5 +1,34 @@
 package slackbot
 
+// This package is serves the purpose to create bots for slack
+//
+// Here is an example integration:
+//
+//     package main
+//
+//     import (
+//     	"fmt"
+//     	"github.com/pastjean/slackbot"
+//     	"log"
+//     	"os"
+//     )
+//
+//     func main() {
+//     	s := slackbot.NewSlackBot()
+//
+//     	s.OnMessageEvents(func(evt slackbot.MessageEvent) {
+//     		fmt.Printf("%v\n", evt)
+//     	})
+//
+//     	token := os.Getenv("SLACK_TOKEN")
+//     	if token == "" {
+// 	    	log.Fatal("SLACK_TOKEN environment variable should be set")
+// 	    }
+//
+//     	s.SetToken(token)
+//     	log.Fatal(s.Start())
+//     }
+
 import (
 	"github.com/gorilla/websocket"
 	"io"
@@ -18,6 +47,8 @@ type SlackBot struct {
 
 	started bool
 }
+
+// Statefull SlackBot instance, you can have multiples
 
 func NewSlackBot() SlackBot {
 	s := SlackBot{}
