@@ -1,83 +1,91 @@
-package main
+package slack
 
 import (
-	"io"
+	"encoding/json"
+	"errors"
+	"github.com/gorilla/websocket"
 	"io/ioutil"
+	"net/http"
 )
 
-type SlackRtm struct {
-	unknownEventHandlers        []func(Event, []byte)
-	helloEventHandlers          []func(HelloEvent)
-	presenceChangeEventHandlers []func(PresenceChangeEvent)
-	messageEventHandlers        []func(MessageEvent)
+type RtmStartAnswer struct {
+	Ok    bool
+	Error string
+	Url   string
+	//	Users    []User
+	//	Channels []Channel
 }
 
-func NewSlackRtm() SlackRtm {
-	s := SlackRtm{}
+// type Channel struct {
+// 	Id          string
+// 	Name        string
+// 	IsChannel   bool `json:"is_channel"`
+// 	Creator     string
+// 	IsArchived  bool   `json:"is_archived"`
+// 	IsGeneral   bool   `json:"is_general"`
+// 	IsMember    bool   `json:"is_member"`
+// 	UnreadCount int    `json:"unread_cout"`
+// 	LastRead    string `json:"last_read"`
+// 	// Members     []string
+// 	Topic   ChannelTopic
+// 	Purpose ChannelTopic
+// }
+//
+// type ChannelTopic struct {
+// 	Value   string
+// 	Creator string
+// }
+//
+// type User struct {
+// 	Id       string
+// 	Name     string
+// 	Deleted  bool
+// 	Status   string
+// 	Color    string
+// 	RealName string `json:"real_name"`
+// }
 
-	s.unknownEventHandlers = make([]func(Event, []byte), 0)
-	s.helloEventHandlers = make([]func(HelloEvent), 0)
-	s.presenceChangeEventHandlers = make([]func(PresenceChangeEvent), 0)
-	s.messageEventHandlers = make([]func(MessageEvent), 0)
-
-	return s
-}
-
-func (s SlackRtm) triggerUnknownEvents(evt Event, evtstring []byte) {
-	for _, handler := range s.unknownEventHandlers {
-		handler(evt, evtstring)
+func GetSlackRtm(token string) (*websocket.Conn, error) {
+	ans, err := getRTMWebSocketURL(token)
+	if err != nil {
+		return nil, err
 	}
-}
-func (s SlackRtm) OnUnknownEvent(handler func(Event, []byte)) {
-	s.unknownEventHandlers = append(s.unknownEventHandlers, handler)
-}
-
-func (s SlackRtm) triggerHelloEvents(evt HelloEvent) {
-	for _, handler := range s.helloEventHandlers {
-		handler(evt)
-	}
-}
-func (s SlackRtm) OnHelloEvent(handler func(HelloEvent)) {
-	s.helloEventHandlers = append(s.helloEventHandlers, handler)
-}
-
-func (s SlackRtm) triggerPresenceChangeEvents(evt PresenceChangeEvent) {
-	for _, handler := range s.presenceChangeEventHandlers {
-		handler(evt)
-	}
-}
-func (s SlackRtm) OnPresenceChangeEvent(handler func(PresenceChangeEvent)) {
-	s.presenceChangeEventHandlers = append(s.presenceChangeEventHandlers, handler)
-}
-
-func (s SlackRtm) triggerMessageEvents(evt MessageEvent) {
-	for _, handler := range s.messageEventHandlers {
-		handler(evt)
-	}
-}
-
-func (s SlackRtm) OnMessageEvent(handler func(MessageEvent)) {
-	s.messageEventHandlers = append(s.messageEventHandlers, handler)
-}
-
-func (s SlackRtm) parseEvent(evtReader io.Reader) error {
-	evtstring, _ := ioutil.ReadAll(evtReader)
-
-	genericEvt := parseEvent(evtstring)
-
-	switch genericEvt.Type {
-	default:
-		s.triggerUnknownEvents(genericEvt, evtstring)
-	case "hello":
-		evt := parseHelloEvent(evtstring)
-		s.triggerHelloEvents(evt)
-	case "presence_change":
-		evt := parsePresenceChangeEvent(evtstring)
-		s.triggerPresenceChangeEvents(evt)
-	case "message":
-		evt := parseMessageEvent(evtstring)
-		s.triggerMessageEvents(evt)
+	if !ans.Ok {
+		return nil, errors.New(ans.Error)
 	}
 
-	return nil
+	conn, err := dialWebSocket(ans.Url)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, err
+}
+
+func getRTMWebSocketURL(token string) (RtmStartAnswer, error) {
+	endpoint := "https://slack.com/api/rtm.start"
+
+	rtmStartString := endpoint + "?token=" + token
+
+	resp, err := http.Get(rtmStartString)
+	if err != nil {
+		return RtmStartAnswer{}, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var ans RtmStartAnswer
+
+	json.Unmarshal(body, &ans)
+
+	return ans, nil
+}
+
+func dialWebSocket(url string) (*websocket.Conn, error) {
+	var dialer *websocket.Dialer
+	var dialHeader http.Header
+
+	conn, _, err := dialer.Dial(url, dialHeader)
+
+	return conn, err
 }
