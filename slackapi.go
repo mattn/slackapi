@@ -1,4 +1,4 @@
-package slack
+package slackbot
 
 import (
 	"net/http"
