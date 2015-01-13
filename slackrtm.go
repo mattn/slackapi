@@ -45,6 +45,8 @@ type RtmStartAnswer struct {
 // 	RealName string `json:"real_name"`
 // }
 
+// If you want to manually get a websocket from the api call use this function
+// otherwise SlackBot manages everything by itself
 func GetSlackRtm(token string) (*websocket.Conn, error) {
 	ans, err := getRTMWebSocketURL(token)
 	if err != nil {

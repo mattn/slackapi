@@ -34,6 +34,8 @@ import (
 	"io/ioutil"
 )
 
+// Statefull SlackBot instance, you can have multiples SlackBots in the same process
+// independant of eachother
 type SlackBot struct {
 	allEventsHandlers           []func(Event, []byte)
 	unknownEventHandlers        []func(Event, []byte)
@@ -47,8 +49,7 @@ type SlackBot struct {
 	started bool
 }
 
-// Statefull SlackBot instance, you can have multiples
-
+// Instanciate a new SlackBot
 func NewSlackBot() SlackBot {
 	s := SlackBot{}
 	s.started = false
@@ -60,6 +61,8 @@ func NewSlackBot() SlackBot {
 	return s
 }
 
+// Start() starts the listening loop of the websocket, bot will parse Events
+// and trigger the binded events
 func (s SlackBot) Start() error {
 
 	conn, err := GetSlackRtm(s.token)
@@ -95,6 +98,9 @@ func (s SlackBot) runLoop() error {
 func (s SlackBot) Token() string {
 	return s.token
 }
+
+// Use this before starting the bot, this is the token given to you when you add
+// the integration, it can be retrieved https://stjeanme.slack.com/services
 func (s *SlackBot) SetToken(tok string) {
 	s.token = tok
 }
@@ -104,8 +110,11 @@ func (s SlackBot) triggerAllEvents(evt Event, evtstring []byte) {
 		handler(evt, evtstring)
 	}
 }
+
+// If you want to always trigger a function on all events happening where
+// SlackBot can be found
 func (s *SlackBot) OnAllEvents(handler func(Event, []byte)) {
-	s.unknownEventHandlers = append(s.allEventsHandlers, handler)
+	s.allEventHandlers = append(s.allEventsHandlers, handler)
 }
 
 func (s SlackBot) triggerUnknownEvents(evt Event, evtstring []byte) {
@@ -113,6 +122,8 @@ func (s SlackBot) triggerUnknownEvents(evt Event, evtstring []byte) {
 		handler(evt, evtstring)
 	}
 }
+
+// Triggered on UnknownEvent
 func (s *SlackBot) OnUnknownEvents(handler func(Event, []byte)) {
 	s.unknownEventHandlers = append(s.unknownEventHandlers, handler)
 }
@@ -122,6 +133,8 @@ func (s SlackBot) triggerHelloEvents(evt HelloEvent) {
 		handler(evt)
 	}
 }
+
+// Triggered on HelloEvent
 func (s *SlackBot) OnHelloEvents(handler func(HelloEvent)) {
 	s.helloEventHandlers = append(s.helloEventHandlers, handler)
 }
@@ -131,6 +144,8 @@ func (s SlackBot) triggerPresenceChangeEvents(evt PresenceChangeEvent) {
 		handler(evt)
 	}
 }
+
+// Triggered on PresenceChangeEvent
 func (s *SlackBot) OnPresenceChangeEvents(handler func(PresenceChangeEvent)) {
 	s.presenceChangeEventHandlers = append(s.presenceChangeEventHandlers, handler)
 }
@@ -141,6 +156,7 @@ func (s SlackBot) triggerMessageEvents(evt MessageEvent) {
 	}
 }
 
+// Triggered on all types of MessageEvent
 func (s *SlackBot) OnMessageEvents(handler func(MessageEvent)) {
 	s.messageEventHandlers = append(s.messageEventHandlers, handler)
 }
