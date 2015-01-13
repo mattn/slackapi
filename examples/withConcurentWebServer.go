@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/pastjean/go-slackbot"
+	slack "github.com/pastjean/slackbot"
 	"log"
 	"net/http"
 	"os"
