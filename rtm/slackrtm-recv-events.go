@@ -1,11 +1,12 @@
-package slackbot
+package rtm
 
 import "encoding/json"
 
 // Basic event you only know the type of the event which slack gives us.
 // For more information on the events look at https://api.slack.com/rtm
 type Event struct {
-	Type string
+	Id   string `json:"_id,omitempty"`
+	Type string `json:"type"`
 }
 
 // Hello Event doesnt have more information than the basic event, this one only
@@ -19,27 +20,27 @@ type HelloEvent struct {
 // https://api.slack.com/events/presence_change
 type PresenceChangeEvent struct {
 	Event
-	User     string
-	Presence string
+	User     string `json:"user"`
+	Presence string `json:"presence"`
 }
 
 // Both MessageEvent and MessageEditedEvent Share this structure
 type MessageEventBase struct {
 	Event
-	Channel string
-	User    string
-	Text    string
-	Ts      string
-	Team    string
+	Channel string `json:"channel"`
+	User    string `json:"user,omitempty"`
+	Text    string `json:"text,omitempty"`
+	Ts      string `json:"ts"`
+	Team    string `json:"team,omitempty"`
 }
 
 // A message was sent to a channel
 // https://api.slack.com/events/message
 type MessageEvent struct {
 	MessageEventBase
-	Message MessageChangeEvent
-	Subtype string
-	Hidden  bool
+	Message *MessageChangeEvent `json:"message,omitempty"`
+	Subtype string              `json:"subtype,omitempty"`
+	Hidden  bool                `json:"hidden,omitempty"`
 }
 
 // This is when a MessageEvent was edited
@@ -47,34 +48,34 @@ type MessageEvent struct {
 // https://api.slack.com/events/message/message_changed
 type MessageChangeEvent struct {
 	MessageEventBase
-	Edited EditedEvent
+	Edited *EditedEvent `json:"edited"`
 }
 
 type EditedEvent struct {
-	User string
-	Ts   string
+	User string `json:"user"`
+	Ts   string `json:"ts"`
 }
 
-func parseEvent(evtstring []byte) Event {
+func ParseEvent(evtString []byte) (Event, error) {
 	var evt Event
-	json.Unmarshal(evtstring, &evt)
-	return evt
+	err := json.Unmarshal(evtString, &evt)
+	return evt, err
 }
 
-func parseHelloEvent(evtstring []byte) HelloEvent {
+func ParseHelloEvent(evtString []byte) (HelloEvent, error) {
 	var evt HelloEvent
-	json.Unmarshal(evtstring, &evt)
-	return evt
+	err := json.Unmarshal(evtString, &evt)
+	return evt, err
 }
 
-func parsePresenceChangeEvent(evtstring []byte) PresenceChangeEvent {
+func ParsePresenceChangeEvent(evtString []byte) (PresenceChangeEvent, error) {
 	var evt PresenceChangeEvent
-	json.Unmarshal(evtstring, &evt)
-	return evt
+	err := json.Unmarshal(evtString, &evt)
+	return evt, err
 }
 
-func parseMessageEvent(evtstring []byte) MessageEvent {
+func ParseMessageEvent(evtString []byte) (MessageEvent, error) {
 	var evt MessageEvent
-	json.Unmarshal(evtstring, &evt)
-	return evt
+	err := json.Unmarshal(evtString, &evt)
+	return evt, err
 }

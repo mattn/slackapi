@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
-	slack "github.com/pastjean/slackbot"
 	"log"
 	"os"
+
+	"github.com/pastjean/slackbot"
+	"github.com/pastjean/slackbot/rtm"
 )
 
 func main() {
-	s := slack.NewSlackBot()
+	s := slackbot.NewSlackBot()
 
-	s.OnMessageEvents(func(evt slack.MessageEvent) {
+	s.OnMessageEvents(func(evt rtm.MessageEvent) {
 		fmt.Printf("%v\n", evt)
 	})
 
