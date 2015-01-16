@@ -52,6 +52,8 @@ type SlackBot struct {
 
 	started bool
 
+	RtmStartResponse *api.RtmStartResponse
+
 	messageID int
 }
 
@@ -73,6 +75,7 @@ func NewSlackBot() *SlackBot {
 func (s *SlackBot) Start() error {
 
 	rtmResponse, err := api.GetRtmStart(s.token)
+	s.RtmStartResponse = rtmResponse
 
 	if err != nil {
 		return err

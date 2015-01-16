@@ -6,14 +6,6 @@ import (
 	"net/url"
 )
 
-// channels.join is not available for bots
-// func ChannelsJoin(channel string, token string) (*http.Response, error) {
-// 	return http.PostForm("https://slack.com/api/channels.join",
-// 		url.Values{"channel": {channel}, "token": {token}})
-// }
-//
-// func ApiTest() {}
-//
 func get(url string, params url.Values) (*http.Response, error) {
 	return http.Get(url + "?" + params.Encode())
 }
