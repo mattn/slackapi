@@ -29,6 +29,7 @@
 package slackbot
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 
@@ -70,7 +71,7 @@ func NewSlackBot() *SlackBot {
 	return &s
 }
 
-// Start() starts the listening loop of the websocket, bot will parse Events
+// Start starts the listening loop of the websocket, bot will parse Events
 // and trigger the binded events
 func (s *SlackBot) Start() error {
 
@@ -81,6 +82,7 @@ func (s *SlackBot) Start() error {
 		return err
 	}
 
+	fmt.Printf("URL:%v\n", rtmResponse.Url)
 	conn, err := rtm.Dial(rtmResponse.Url)
 
 	if err != nil {
@@ -118,16 +120,19 @@ func (s SlackBot) runLoop() error {
 	}
 }
 
+// Token returns the api token
 func (s SlackBot) Token() string {
 	return s.token
 }
 
-// Use this before starting the bot, this is the token given to you when you add
-// the integration, it can be retrieved https://stjeanme.slack.com/services
+// SetToken is used to set the api token, use this before starting the bot
+// https://{domain}.slack.com/services
 func (s *SlackBot) SetToken(tok string) {
 	s.token = tok
 }
 
+// OnConnectEvent sets up a callback that will happen when the bot successfully
+// connects to the api
 func (s *SlackBot) OnConnectEvent(handler func()) {
 	s.onConnectEventHandlers = append(s.onConnectEventHandlers, handler)
 }
@@ -145,8 +150,8 @@ func (s SlackBot) triggerAllEvents(evt rtm.Event, evtstring []byte) {
 	}
 }
 
-// If you want to always trigger a function on all events happening where
-// SlackBot can be found
+// OnAllEvents sets up a callback func that will happen on all events the user
+// receives
 func (s *SlackBot) OnAllEvents(handler func(rtm.Event, []byte)) {
 	s.allEventsHandlers = append(s.allEventsHandlers, handler)
 }
@@ -157,7 +162,8 @@ func (s SlackBot) triggerUnknownEvents(evt rtm.Event, evtstring []byte) {
 	}
 }
 
-// Triggered on UnknownEvent
+// OnUnknownEvents sets up a callback func that will be called when this api
+// receives an event unknown to its api
 func (s *SlackBot) OnUnknownEvents(handler func(rtm.Event, []byte)) {
 	s.unknownEventHandlers = append(s.unknownEventHandlers, handler)
 }
@@ -168,7 +174,7 @@ func (s SlackBot) triggerHelloEvents(evt rtm.HelloEvent) {
 	}
 }
 
-// Triggered on HelloEvent
+// OnHelloEvents sets up a callback that happens on the hello event
 func (s *SlackBot) OnHelloEvents(handler func(rtm.HelloEvent)) {
 	s.helloEventHandlers = append(s.helloEventHandlers, handler)
 }
@@ -179,7 +185,7 @@ func (s SlackBot) triggerPresenceChangeEvents(evt rtm.PresenceChangeEvent) {
 	}
 }
 
-// Triggered on PresenceChangeEvent
+// OnPresenceChangeEvents sets up an event that happens on PresenceChangeEvent
 func (s *SlackBot) OnPresenceChangeEvents(handler func(rtm.PresenceChangeEvent)) {
 	s.presenceChangeEventHandlers = append(s.presenceChangeEventHandlers, handler)
 }
@@ -190,7 +196,7 @@ func (s SlackBot) triggerMessageEvents(evt rtm.MessageEvent) {
 	}
 }
 
-// Triggered on all types of MessageEvent
+// OnMessageEvents sets up a callback that happens on all MessageEvent type events
 func (s *SlackBot) OnMessageEvents(handler func(rtm.MessageEvent)) {
 	s.messageEventHandlers = append(s.messageEventHandlers, handler)
 }
@@ -230,6 +236,8 @@ func (s SlackBot) parseEvent(evtReader io.Reader) error {
 	return err
 }
 
+// SendMessage Uses the rtm api to Send a messages channel must be the channel
+// ID and not the channel name
 func (s *SlackBot) SendMessage(channel string, message string) error {
 	evt := rtm.MessageSendEvent{Id: s.messageID, Channel: channel, Text: message}
 	evt.Type = "message"

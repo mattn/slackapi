@@ -18,13 +18,13 @@ func getJSON(url string, params url.Values, v interface{}) error {
 	return json.NewDecoder(resp.Body).Decode(v)
 }
 
-// AuthTest ...
+// AuthTest tests if our auth token is good
 func AuthTest(token string) (*http.Response, error) {
 	return http.PostForm("https://slack.com/api/auth.test",
 		url.Values{"token": {token}})
 }
 
-// ChatPostMessage ...
+// ChatPostMessage posts a message to a slack channel
 func ChatPostMessage(channel string, text string, token string) (*http.Response, error) {
 	return http.PostForm(
 		"chat.postMessage",
@@ -35,7 +35,8 @@ func ChatPostMessage(channel string, text string, token string) (*http.Response,
 		})
 }
 
-// GetRtmStart ...
+// GetRtmStart returns all the info needed to start a realtime (websocket)
+// connection to slack
 func GetRtmStart(token string) (*RtmStartResponse, error) {
 	rtmStartResponse := &RtmStartResponse{}
 	err := getJSON(
@@ -46,7 +47,7 @@ func GetRtmStart(token string) (*RtmStartResponse, error) {
 	return rtmStartResponse, err
 }
 
-// GetChannelList ...
+// GetChannelList returns the slack domain channel list
 func GetChannelList(token string) (*ChannelListResponse, error) {
 	channelList := &ChannelListResponse{}
 	err := getJSON(
@@ -57,7 +58,7 @@ func GetChannelList(token string) (*ChannelListResponse, error) {
 	return channelList, err
 }
 
-// GetUserList ...
+// GetUserList returns the slack domain user list
 func GetUserList(token string) (*UserListResponse, error) {
 	userList := &UserListResponse{}
 	err := getJSON(
