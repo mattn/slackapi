@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func DialWebSocket(url string) (*websocket.Conn, error) {
+func dialWebSocket(url string) (*websocket.Conn, error) {
 	var dialer *websocket.Dialer
 	var dialHeader http.Header
 

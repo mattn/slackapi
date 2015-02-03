@@ -20,7 +20,7 @@ func NewSlackRTM(resp *api.RtmStartResponse) *SlackRTM {
 }
 
 func (rtm *SlackRTM) Start() error {
-	conn, err := DialWebSocket(rtm.rtmStartResponse.URL)
+	conn, err := dialWebSocket(rtm.rtmStartResponse.URL)
 	if err != nil {
 		return err
 	}
