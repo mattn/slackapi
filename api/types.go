@@ -71,3 +71,7 @@ type IM struct {
 	Created       int    `json:"created"` // a unix timestamp
 	IsUserDeleted bool   `json:"is_user_deleted"`
 }
+
+type File struct {
+	// https://api.slack.com/types/file
+}

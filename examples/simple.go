@@ -5,22 +5,27 @@ import (
 	"log"
 	"os"
 
-	"github.com/pastjean/slackbot"
+	"github.com/pastjean/slackbot/api"
 	"github.com/pastjean/slackbot/rtm"
 )
 
 func main() {
-	s := slackbot.NewSlackBot()
-
-	s.OnMessageEvents(func(evt rtm.MessageEvent) {
-		fmt.Printf("%v\n", evt)
-	})
-
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {
 		log.Fatal("SLACK_TOKEN environment variable should be set")
 	}
 
-	s.SetToken(token)
-	log.Fatal(s.Start())
+	resp, err := api.RtmStart(token)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slackrtm := rtm.NewSlackRTM(resp)
+
+	// You can directly access the EventController underneat
+	slackrtm.OnMessageEvents(func(evt rtm.MessageEvent) {
+		fmt.Printf("%v\n", evt)
+	})
+
+	log.Fatal(slackrtm.Start())
 }

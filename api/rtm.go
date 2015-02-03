@@ -15,11 +15,10 @@ type RtmStartResponse struct {
 	// Bots
 }
 
-// rtm.start
-
-// GetRtmStart returns all the info needed to start a realtime (websocket)
+// RtmStart returns all the info needed to start a realtime (websocket)
 // connection to slack
-func GetRtmStart(token string) (*RtmStartResponse, error) {
+// https://api.slack.com/methods/rtm.start
+func RtmStart(token string) (*RtmStartResponse, error) {
 	rtmStartResponse := &RtmStartResponse{}
 	err := getJSON(
 		"https://slack.com/api/rtm.start",

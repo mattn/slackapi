@@ -1,6 +1,7 @@
-# slackbot
+# slag
 
-A simple slackbot framework that handles everythings peacefully!
+[Slack API](https://api.slack.com/) client implemented in go, it should handle everything simply and
+peacefully.
 
 # Usage
 
@@ -34,3 +35,8 @@ func main() {
 	log.Fatal(s.Start())
 }
 ```
+
+# Not implemented
+
+- [Messages subtypes](https://api.slack.com/events/message)
+- Lots of standard api calls
