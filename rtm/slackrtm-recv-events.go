@@ -56,6 +56,25 @@ type EditedEvent struct {
 	Ts   string `json:"ts"`
 }
 
+// A new Channel was Created
+// https://api.slack.com/events/channel_created
+type ChannelCreatedEvent struct {
+	Event
+	Channel struct {
+		ID      string `json:id`
+		Name    string `json:name`
+		Created string `json:created`
+		Creator string `json:creator`
+	} `json:"channel"`
+}
+
+//-----------------------------------------
+// TODO: ChannelRenamed
+// TODO: EmojiChanged
+// TODO: Users
+// TODO: Files
+//-----------------------------------------
+
 func ParseEvent(evtString []byte) (Event, error) {
 	var evt Event
 	err := json.Unmarshal(evtString, &evt)
@@ -76,6 +95,12 @@ func ParsePresenceChangeEvent(evtString []byte) (PresenceChangeEvent, error) {
 
 func ParseMessageEvent(evtString []byte) (MessageEvent, error) {
 	var evt MessageEvent
+	err := json.Unmarshal(evtString, &evt)
+	return evt, err
+}
+
+func ParseChannelCreatedEvent(evtString []byte) (ChannelCreatedEvent, error) {
+	var evt ChannelCreatedEvent
 	err := json.Unmarshal(evtString, &evt)
 	return evt, err
 }

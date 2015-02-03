@@ -1,0 +1,3 @@
+package api
+
+// stars.list

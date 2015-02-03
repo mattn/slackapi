@@ -14,21 +14,8 @@ type UserListResponse struct {
 	Users []User `json:"users"`
 }
 
-type RtmStartResponse struct {
-	Response
-	Url string `json:"url"`
-	//Self     User      `json:"self"`
-	Users    []User    `json:"users"`
-	Channels []Channel `json:"channels"`
-
-	// Groups
-	// Ims
-	// Team
-	// Bots
-}
-
 type Channel struct {
-	Id         string   `json:"id"`
+	ID         string   `json:"id"`
 	Name       string   `json:"name"`
 	IsChannel  bool     `json:"is_channel"`
 	Created    int      `json:"created"`
@@ -52,7 +39,7 @@ type Channel struct {
 }
 
 type User struct {
-	Id      string `json:"id"`
+	ID      string `json:"id"`
 	Name    string `json:"name"`
 	Deleted bool   `json:"deleted"`
 	Color   string `json:"color"`
@@ -75,4 +62,12 @@ type User struct {
 	IsRestricted      bool `json:"is_restricted"`
 	IsUltraRestricted bool `json:"is_ultra_restricted"`
 	HasFiles          bool `json:"has_files"`
+}
+
+type IM struct {
+	ID            string `json:"id"`
+	IsIM          bool   `json:"is_im"`
+	User          string `json:"user"`
+	Created       int    `json:"created"` // a unix timestamp
+	IsUserDeleted bool   `json:"is_user_deleted"`
 }

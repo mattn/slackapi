@@ -29,7 +29,6 @@
 package slackbot
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 
@@ -82,8 +81,7 @@ func (s *SlackBot) Start() error {
 		return err
 	}
 
-	fmt.Printf("URL:%v\n", rtmResponse.Url)
-	conn, err := rtm.Dial(rtmResponse.Url)
+	conn, err := rtm.Dial(rtmResponse.URL)
 
 	if err != nil {
 		return err
@@ -219,18 +217,67 @@ func (s SlackBot) parseEvent(evtReader io.Reader) error {
 			return err
 		}
 		s.triggerHelloEvents(evt)
-	case "presence_change":
-		evt, err := rtm.ParsePresenceChangeEvent(evtString)
-		if err != nil {
-			return err
-		}
-		s.triggerPresenceChangeEvents(evt)
 	case "message":
 		evt, err := rtm.ParseMessageEvent(evtString)
 		if err != nil {
 			return err
 		}
 		s.triggerMessageEvents(evt)
+	case "channel_marked":
+	case "channel_created":
+	case "channel_joined":
+	case "channel_left":
+	case "channel_deleted":
+	case "channel_rename":
+	case "channel_archive":
+	case "channel_unarchive":
+	case "channel_history_changed":
+	case "im_created":
+	case "im_open":
+	case "im_close":
+	case "im_marked":
+	case "im_history_changed":
+	case "group_joined":
+	case "group_left":
+	case "group_open":
+	case "group_close":
+	case "group_archive":
+	case "group_unarchive":
+	case "group_rename":
+	case "group_marked":
+	case "group_history_changed":
+	case "file_created":
+	case "file_shared":
+	case "file_unshared":
+	case "file_public":
+	case "file_private":
+	case "file_change":
+	case "file_deleted":
+	case "file_comment_added":
+	case "file_comment_edited":
+	case "file_comment_deleted":
+	case "presence_change":
+		evt, err := rtm.ParsePresenceChangeEvent(evtString)
+		if err != nil {
+			return err
+		}
+		s.triggerPresenceChangeEvents(evt)
+
+	case "manual_presence_change":
+	case "pref_change":
+	case "user_change":
+	case "team_join":
+	case "star_added":
+	case "star_removed":
+	case "emoji_changed":
+	case "commands_changed":
+	case "team_pref_change":
+	case "team_rename":
+	case "team_domain_change":
+	case "bot_added":
+	case "bot_changed":
+	case "accounts_changed":
+	case "team_migration_started":
 	}
 
 	return err
