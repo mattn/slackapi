@@ -9,18 +9,20 @@ import (
 type SlackRTM struct {
 	EventController
 	conn             *websocket.Conn
-	rtmStartResponse *api.RtmStartResponse
+	RtmStartResponse *api.RtmStartResponse
+
+	connectEventHandlers []func()
 
 	// The ID we use to send messages (must change everytime we send a msg)
 	messageID int
 }
 
 func NewSlackRTM(resp *api.RtmStartResponse) *SlackRTM {
-	return &SlackRTM{messageID: 1, rtmStartResponse: resp}
+	return &SlackRTM{messageID: 1, RtmStartResponse: resp}
 }
 
 func (rtm *SlackRTM) Start() error {
-	conn, err := dialWebSocket(rtm.rtmStartResponse.URL)
+	conn, err := dialWebSocket(rtm.RtmStartResponse.URL)
 	if err != nil {
 		return err
 	}
@@ -61,4 +63,16 @@ func (rtm *SlackRTM) SendMessage(channel string, message string) error {
 	rtm.messageID++
 
 	return nil
+}
+
+func (rtm *SlackRTM) OnConnectEvent(handler func()) {
+	if rtm.connectEventHandlers == nil {
+		rtm.connectEventHandlers = make([]func(), 0)
+	}
+	rtm.connectEventHandlers = append(rtm.connectEventHandlers, handler)
+}
+func (rtm *SlackRTM) triggerConnectEventHandlers() {
+	for _, handler := range rtm.connectEventHandlers {
+		handler()
+	}
 }
