@@ -11,3 +11,7 @@ see examples folder
 
 - [Messages subtypes](https://api.slack.com/events/message)
 - Lots of standard api calls
+
+# Dependencies
+
+- [github.com/gorilla/websockets](https://github.com/gorilla/websocket)
