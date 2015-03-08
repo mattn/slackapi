@@ -1,6 +1,6 @@
-# slag
+# go-slackapi
 
-[![GoDoc](http://godoc.org/github.com/pastjean/slackbot?status.svg)](http://godoc.org/github.com/pastjean/slackbot)
+[![GoDoc](http://godoc.org/github.com/pastjean/slackapi?status.svg)](http://godoc.org/github.com/pastjean/slackapi)
 
 [Slack API](https://api.slack.com/) client implemented in go, it should handle everything simply and
 peacefully.
