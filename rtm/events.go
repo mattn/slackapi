@@ -1,6 +1,6 @@
 package rtm
 
-import "github.com/pastjean/slackbot/api"
+import "github.com/pastjean/slackapi/api"
 
 // Event is a Basic event you only know the type of the event which slack gives us.
 // For more information on the events look at https://api.slack.com/rtm
